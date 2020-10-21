@@ -26,13 +26,12 @@ constexpr int ALIGN_BYTES = 16;
 template<typename T, typename AccumT, typename OutT>
 struct LogSoftMaxForwardEpilogue {
   __device__ __forceinline__ LogSoftMaxForwardEpilogue(AccumT max_input, AccumT sum)
-    : max_input(max_input),  logsum(std::log(sum)) {}
+    : logsum(max_input + std::log(sum)) {}
 
   __device__ __forceinline__ OutT operator()(T input) const {
-    return static_cast<OutT>(input - max_input - logsum);
+    return static_cast<OutT>(input - logsum);
 }
 
-  const AccumT max_input;
   const AccumT logsum;
 };
 
